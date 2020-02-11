@@ -30,7 +30,7 @@ export const setupApp = (app: Express) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  app.use(express.static(path.join(__dirname, 'build')));
+  app.use(express.static(path.join(__dirname, '../build')));
 
   app.get('/ping', function(req, res) {
     return res.send('pong');

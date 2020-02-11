@@ -18,8 +18,10 @@
     "typescript": "~3.7.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "react-scripts start",
+    "start": "node ./dist/server.js",
+    "build": "react-scripts build && npm run build:server",
+    "build:server": "tsc --project tsconfig.server.json",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "ts-node-dev --project ./tsconfig.server.json ./src/server.ts"
