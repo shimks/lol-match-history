@@ -3,6 +3,28 @@ import { ParamsDictionary, Response, Request } from 'express-serve-static-core';
 import bodyParser from 'body-parser';
 import path from 'path';
 import { Kayn } from 'kayn';
+import {
+  MatchV4MatchDTO,
+  MatchV4ParticipantStatsDTO,
+  MatchV4ParticipantDTO,
+} from 'kayn/typings/dtos';
+
+export type MatchInfo = Pick<
+  MatchV4MatchDTO,
+  'gameMode' | 'gameCreation' | 'gameDuration'
+> &
+  Pick<
+    MatchV4ParticipantStatsDTO,
+    | 'perk0'
+    | 'perkSubStyle'
+    | 'win'
+    | 'kills'
+    | 'deaths'
+    | 'assists'
+    | 'champLevel'
+    | 'totalMinionsKilled'
+  > &
+  Pick<MatchV4ParticipantDTO, 'championId' | 'runes' | 'spell1Id' | 'spell2Id'>;
 
 export const setupApp = (app: Express) => {
   app.use(bodyParser.json());
@@ -15,7 +37,11 @@ export const setupApp = (app: Express) => {
   });
 
   const wrap = (fn: RequestHandler<ParamsDictionary>) => (
-    args: [Request<ParamsDictionary>, Response<ParamsDictionary>, NextFunction],
+    ...args: [
+      Request<ParamsDictionary>,
+      Response<ParamsDictionary>,
+      NextFunction,
+    ]
   ) => fn(...args).catch(args[2]);
 
   app.get(
@@ -48,13 +74,15 @@ export const setupApp = (app: Express) => {
             return participant.participantId === participantId;
           })!;
 
-          const result = {
+          const result: MatchInfo = {
             gameMode: matchResult.gameMode!,
             gameCreation: matchResult.gameCreation!,
             win: participant.stats!.win!,
             gameDuration: matchResult.gameDuration!,
-            championid: participant.championId!,
+            championId: participant.championId!,
             runes: participant.runes,
+            perk0: participant.stats!.perk0,
+            perkSubStyle: participant.stats!.perkSubStyle,
             spell1Id: participant.spell1Id!,
             spell2Id: participant.spell2Id!,
             kills: participant.stats!.kills!,
@@ -63,6 +91,7 @@ export const setupApp = (app: Express) => {
             champLevel: participant.stats!.champLevel!,
             totalMinionsKilled: participant.stats!.totalMinionsKilled!,
           };
+
           data.push(result);
 
           // console.log(result);
