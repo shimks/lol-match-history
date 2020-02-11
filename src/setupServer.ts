@@ -11,7 +11,7 @@ import {
 
 export type MatchInfo = Pick<
   MatchV4MatchDTO,
-  'gameMode' | 'gameCreation' | 'gameDuration'
+  'queueId' | 'gameCreation' | 'gameDuration'
 > &
   Pick<
     MatchV4ParticipantStatsDTO,
@@ -75,7 +75,7 @@ export const setupApp = (app: Express) => {
           })!;
 
           const result: MatchInfo = {
-            gameMode: matchResult.gameMode!,
+            queueId: matchResult.queueId!,
             gameCreation: matchResult.gameCreation!,
             win: participant.stats!.win!,
             gameDuration: matchResult.gameDuration!,
@@ -94,7 +94,7 @@ export const setupApp = (app: Express) => {
 
           data.push(result);
 
-          // console.log(result);
+          console.log(result);
         }
 
         res.send(data);
